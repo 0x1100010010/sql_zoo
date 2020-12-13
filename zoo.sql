@@ -79,3 +79,13 @@ SELECT name,continent FROM world i
      WHERE i.continent=j.continent
        AND i.name != j.name
        AND j.population>0)
+
+-- https://sqlzoo.net/wiki/SUM_and_COUNT
+SELECT SUM(population) FROM world
+SELECT DISTINCT(continent) FROM world
+SELECT SUM(gdp) FROM world WHERE continent = 'Africa'
+SELECT COUNT(area) FROM world WHERE area >= 1000000
+SELECT sum(population) FROM world WHERE name IN ('Estonia', 'Latvia', 'Lithuania')
+SELECT continent, COUNT(name) FROM world GROUP BY(continent)
+SELECT continent, COUNT(name) FROM world WHERE population >= 10000000 GROUP BY(continent) 
+SELECT continent FROM world GROUP BY(continent) HAVING SUM(population) >= 100000000
