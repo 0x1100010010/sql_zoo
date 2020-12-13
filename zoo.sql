@@ -34,3 +34,48 @@ SELECT name, ROUND(gdp/population,-3) FROM world WHERE gdp>1000000000000
 SELECT name, capital FROM world WHERE LENGTH(name) = Length(capital)
 SELECT name, capital FROM world WHERE LEFT(name,1) = LEFT(capital,1) AND name != capital
 SELECT name FROM world WHERE name LIKE '%a%' AND name LIKE '%e%' AND name LIKE '%i%' AND name LIKE '%o%' AND name LIKE '%u%' AND name NOT LIKE '% %'
+
+
+-- https://sqlzoo.net/wiki/SELECT_from_Nobel_Tutorial
+SELECT yr, subject, winner FROM nobel WHERE yr = 1950
+SELECT winner FROM nobel WHERE yr = 1962 AND subject = 'Literature'
+SELECT yr, subject FROM nobel WHERE winner = 'Albert Einstein'
+SELECT winner FROM nobel WHERE subject = 'Peace' AND yr >= 2000
+SELECT * FROM nobel WHERE subject = 'Literature' AND yr >= 1980 AND yr <=1989
+SELECT * FROM nobel WHERE  winner IN ('Theodore Roosevelt', 'Woodrow Wilson', 'Jimmy Carter', 'Barack Obama')
+SELECT winner FROM nobel WHERE winner LIKE 'John %'
+SELECT * FROM nobel WHERE subject = 'Physics' AND yr = 1980 OR subject = 'Chemistry' AND yr = 1984
+SELECT * FROM nobel WHERE yr=1980 AND subject NOT IN ('Chemistry','Medicine')
+SELECT * FROM nobel WHERE (subject = 'Medicine' AND yr < 1910) OR (subject = 'Literature' AND yr >= 2004)
+SELECT * FROM nobel WHERE winner = 'PETER GRÜNBERG'
+SELECT * FROM nobel WHERE winner = 'EUGENE O\'NEILL''
+SELECT winner, yr, subject FROM nobel WHERE winner LIKE 'Sir%' ORDER BY yr DESC, winner
+SELECT winner, subject FROM nobel WHERE yr=1984 ORDER BY subject IN ('Physics', 'Chemistry'), subject, winner
+
+
+-- https://sqlzoo.net/wiki/SELECT_within_SELECT_Tutorial
+SELECT name FROM world WHERE population > (SELECT population FROM world WHERE name='Russia')
+SELECT name FROM world WHERE continent='Europe' AND gdp/population > (SELECT gdp/population FROM world WHERE name='United Kingdom')
+SELECT name, continent FROM world WHERE continent IN (SELECT continent FROM world WHERE name IN ('Argentina', 'Australia')) ORDER BY name
+SELECT name, population FROM world WHERE population BETWEEN (SELECT population+1 FROM world WHERE name = 'Canada') AND (SELECT population-1 FROM world WHERE name = 'Poland')
+SELECT name, CONCAT(ROUND((population/(SELECT population FROM world WHERE name='Germany'))*100), '%') FROM world WHERE continent = 'Europe'
+SELECT name FROM world WHERE gdp > ALL (SELECT gdp FROM world WHERE continent = 'Europe' AND gdp IS NOT NULL)
+SELECT continent, name, area FROM world i
+  WHERE area >= ALL
+    (SELECT area FROM world j
+        WHERE j.continent=i.continent
+          AND area>0)
+SELECT continent,name FROM world i
+  WHERE i.name <= ALL (
+    SELECT name FROM world j
+     WHERE i.continent=j.continent)
+SELECT name,continent,population FROM world x
+  WHERE 25000000 >= ALL (
+    SELECT population FROM world y
+     WHERE x.continent=y.continent
+       AND y.population>0)
+SELECT name,continent FROM world i
+  WHERE population > ALL ( SELECT population*3 FROM world j
+     WHERE i.continent=j.continent
+       AND i.name != j.name
+       AND j.population>0)
